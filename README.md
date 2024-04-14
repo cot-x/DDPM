@@ -1,0 +1,2 @@
+# DDPM
+Unofficial custmized DenoisingDiffusionProbabilityModel.
