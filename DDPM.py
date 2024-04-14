@@ -19,6 +19,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import torch_optimizer
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader
@@ -370,7 +371,8 @@ class Solver:
         self.diffusion_trainer = GaussianDiffusionTrainer(self.model, self.args.beta_1, self.args.beta_t, self.args.num_times).to(self.device)
         self.diffusion_sampler = GaussianDiffusionSampler(self.model, self.args.beta_1, self.args.beta_t, self.args.num_times).to(self.device)
         
-        self.optimizer = optim.Adam(self.model.parameters(), lr=2 * self.args.lr)
+        #self.optimizer = optim.Adam(self.model.parameters(), lr=2 * self.args.lr)
+        self.optimizer = torch_optimizer.Lamb(self.model.parameters(), lr=2 * self.args.lr)
         self.scheduler = CosineAnnealingLR(self.optimizer, T_max=4, eta_min=self.args.lr / 2)
     
     def weights_init(self, module):
@@ -507,7 +509,7 @@ if __name__ == '__main__':
     parser.add_argument('--beta_t', type=float, default=0.02)
     parser.add_argument('--num_times', type=int, default=1000)
     parser.add_argument('--dim_hidden', type=int, default=128)
-    parser.add_argument('--batch_size', type=int, default=8)
+    parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--num_train', type=int, default=100)
     parser.add_argument('--cpu', action='store_true')
     parser.add_argument('--generate', action='store_true')
