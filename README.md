@@ -33,7 +33,7 @@ python DDPM.py --image_dir "/usr/share/datasets/image_dir"
 ```
 and
 ```
-python DDPM.py --generate 10
+python DDPM.py --generate
 ```
 
 **Note:**
