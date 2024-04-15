@@ -25,7 +25,6 @@ optional arguments:
   --num_train NUM_TRAIN
   --cpu
   --generate
-  --noresume
 ```
 
 ### for example
@@ -38,5 +37,4 @@ python DDPM.py --generate 10
 ```
 
 **Note:**
-- resume.pkl is a file that saves learning checkpoints for resume and includes models, weight data, etc.
 - If a weight.pth file exists in the current directory, the network weights will be automatically read.

@@ -105,9 +105,9 @@ class GaussianDiffusionTrainer(nn.Module):
         self.model = model
         self.num_times = num_times
 
-        self.betas = nn.Parameter(torch.linspace(beta_1, beta_t, num_times).double())
+        betas = nn.Parameter(torch.linspace(beta_1, beta_t, num_times).double())
         
-        alphas = 1. - self.betas
+        alphas = 1. - betas
         alphas_bar = torch.cumprod(alphas, dim=0)
 
         self.sqrt_alphas_bar = nn.Parameter(torch.sqrt(alphas_bar))
@@ -135,16 +135,16 @@ class GaussianDiffusionSampler(nn.Module):
         self.model = model
         self.num_times = num_times
         
-        self.betas = torch.linspace(beta_1, beta_t, num_times).double()
+        betas = torch.linspace(beta_1, beta_t, num_times).double()
         
-        alphas = 1. - self.betas
+        alphas = 1. - betas
         alphas_bar = torch.cumprod(alphas, dim=0)
         alphas_bar_prev = F.pad(alphas_bar, [1, 0], value=1)[:num_times]
         
         self.coeff1 = nn.Parameter(torch.sqrt(1. / alphas))
         self.coeff2 = nn.Parameter(self.coeff1 * (1. - alphas) / torch.sqrt(1. - alphas_bar))
         
-        self.var = nn.Parameter((1. - alphas_bar_prev) / (1. - alphas_bar) * self.betas)
+        self.var = nn.Parameter((1. - alphas_bar_prev) / (1. - alphas_bar) * betas)
 
     def p_mean_variance(self, x_t, t):
         eps = self.model(x_t, t)
@@ -462,7 +462,7 @@ class Solver:
                   + f' Loss[{epoch_loss}]')
 
             ## DEBUG
-            #self.generate(1)
+            #self.generate()
             
             self.scheduler.step()
             
@@ -513,9 +513,10 @@ if __name__ == '__main__':
     parser.add_argument('--num_train', type=int, default=100)
     parser.add_argument('--cpu', action='store_true')
     parser.add_argument('--generate', action='store_true')
-    parser.add_argument('--noresume', action='store_true')
+    #parser.add_argument('--noresume', action='store_true')
     
     args, unknown = parser.parse_known_args()
+    args.noresume = True # Because, can not use for LAMB.
 
     if len(unknown) != 0:
         print(f'Unknown option: {unknown}')
