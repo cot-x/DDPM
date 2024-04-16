@@ -363,7 +363,7 @@ class UNet(nn.Module):
 class Solver:
     def __init__(self, args):
         has_cuda = torch.cuda.is_available() if not args.cpu else False
-        self.device = torch.device("cuda" if has_cuda else "cpu")
+        self.device = torch.device('cuda' if has_cuda else 'cpu')
         
         self.args = args
         self.epoch = 0
@@ -474,11 +474,12 @@ class Solver:
             if resume:
                 self.save_resume()
     
-    def generate(self):
+    def generate(self, num):
         self.model.eval()
-        noise = torch.randn(size=[1, 3, self.args.image_size, self.args.image_size], device=self.device)
-        image = self.diffusion_sampler(noise)
-        save_image(image, os.path.join(self.args.result_dir, f'generated_{time.time()}.png'))
+        for _ in tqdm(range(num)):
+            noise = torch.randn(size=[1, 3, self.args.image_size, self.args.image_size], device=self.device)
+            image = self.diffusion_sampler(noise)
+            save_image(image, os.path.join(self.args.result_dir, f'generated_{time.time()}.png'))
         print('New picture was generated.')
         self.model.train()
 
@@ -492,8 +493,8 @@ def main(args):
     solver = Solver.load(args, resume=not args.noresume)
     solver.load_state()
     
-    if args.generate:
-        solver.generate()
+    if args.generate > 0:
+        solver.generate(args.generate)
         return
     
     solver.train(not args.noresume)
@@ -517,7 +518,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--num_train', type=int, default=100)
     parser.add_argument('--cpu', action='store_true')
-    parser.add_argument('--generate', action='store_true')
+    parser.add_argument('--generate', type=int, default=0)
     #parser.add_argument('--noresume', action='store_true')
     
     args, unknown = parser.parse_known_args()

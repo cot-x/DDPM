@@ -24,7 +24,7 @@ optional arguments:
   --batch_size BATCH_SIZE
   --num_train NUM_TRAIN
   --cpu
-  --generate
+  --generate GENERATE
 ```
 
 ### for example
@@ -33,7 +33,7 @@ python DDPM.py --image_dir "/usr/share/datasets/image_dir"
 ```
 and
 ```
-python DDPM.py --generate
+python DDPM.py --generate 10
 ```
 
 **Note:**
