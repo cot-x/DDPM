@@ -157,6 +157,8 @@ class GaussianDiffusionSampler(nn.Module):
         xt_shape = x.shape
         for times in reversed(range(self.num_times)):
             t = torch.ones([xt_shape[0]], dtype=torch.long, device=x.device) * times
+            x = x.detach()
+            t = t.detach()
             mean, var= self.p_mean_variance(x, t)
             if times > 0:
                 noise = torch.randn_like(x)
